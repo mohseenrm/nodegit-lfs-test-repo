@@ -1,0 +1,24 @@
+{
+  "name": "nodegit-lfs-test-repo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "nodegit": "^0.18.3",
+    "nodegit-lfs": "^0.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohseenrm/nodegit-lfs-test-repo.git"
+  },
+  "author": "Mohseen Mukaddam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mohseenrm/nodegit-lfs-test-repo/issues"
+  },
+  "homepage": "https://github.com/mohseenrm/nodegit-lfs-test-repo#readme"
+}
