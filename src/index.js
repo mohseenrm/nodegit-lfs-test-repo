@@ -4,9 +4,7 @@ const NodeGitLfs = require('nodegit-lfs')(NodeGit);
 
 console.log('NodeGitLFS: ', NodeGitLfs);
 
-const x = NodeGitLfs.then((i) => {
-	console.log('Now? ', i);
-	return i;
+const NodeGitLFS = NodeGitLfs.then((ng) => {
+	console.log('NodeGitLFS: ', ng.LFS);
+	return ng;
 });
-
-x.then( val => console.log('works?? ', val.LFS));
