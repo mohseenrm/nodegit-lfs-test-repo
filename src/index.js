@@ -59,7 +59,7 @@ const NodeGitLFS = NodeGitLfs.then((ng) => {
 	.then((ng) => ng.LFS.initialize(process.cwd()))
 	// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
 	.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
-	.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+	.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 	.then(()=> {
 		return Repository.open(process.cwd())
 	})
