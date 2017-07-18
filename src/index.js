@@ -4,7 +4,7 @@ const NodeGit = require('nodegit');
 const NodeGitLfs = require('nodegit-lfs')(NodeGit);
 const exec = require('./execHelper');
 const Repository = NodeGit.Repository;
-
+const Checkout = NodeGit.Checkout;
 console.log('NodeGitLFS: ', NodeGitLfs);
 function commitFile(repo, fileName, commitMessage) {
 	let index;
@@ -52,17 +52,39 @@ function commitFile(repo, fileName, commitMessage) {
 		});
 }
 
-const NodeGitLFS = NodeGitLfs.then((ng) => {
-	console.log('NodeGitLFS: ', ng.LFS);
-	return ng;
-})
-	.then((ng) => ng.LFS.initialize(process.cwd()))
-	// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
-	.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
-	.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
-	.then(()=> {
-		return Repository.open(process.cwd())
+const testClean = () => {
+	const NodeGitLFS = NodeGitLfs.then((ng) => {
+		console.log('NodeGitLFS: ', ng.LFS);
+		return ng;
 	})
-	.then((repo) => {
-		return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test')
-	});
+		.then((ng) => ng.LFS.initialize(process.cwd()))
+		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
+		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
+		.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		.then(()=> {
+			return Repository.open(process.cwd())
+		})
+		.then((repo) => {
+			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test')
+		});
+}
+
+const testSmudge = () => {
+	const NodeGitLFS = NodeGitLfs.then((ng) => {
+		console.log('NodeGitLFS: ', ng.LFS);
+		return ng;
+	})
+		.then((ng) => ng.LFS.initialize(process.cwd()))
+		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
+		.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		.then(()=> {
+			return Repository.open(process.cwd())
+		})
+		.then((repo) => {
+			var opts = {
+				checkoutStrategy: Checkout.STRATEGY.FORCE
+			};
+			return Checkout.head(repo, opts);
+		});
+}
+return testSmudge();
