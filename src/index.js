@@ -67,7 +67,7 @@ const testClean = () => {
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test')
 		});
-}
+};
 
 const testSmudge = () => {
 	const NodeGitLFS = NodeGitLfs.then((ng) => {
@@ -86,5 +86,11 @@ const testSmudge = () => {
 			};
 			return Checkout.head(repo, opts);
 		});
-}
-return testSmudge();
+};
+
+const testAddAttribute = () => {
+	return NodeGitLfs
+		.then(ng => ng.LFS.addAttribute(path.join(process.cwd(), '.gitattributes'), '*.dmg'))
+		.catch(error => console.log(error));
+};
+return testAddAttribute();
