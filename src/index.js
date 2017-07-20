@@ -3,8 +3,28 @@ const path = require('path');
 const NodeGit = require('nodegit');
 const NodeGitLfs = require('nodegit-lfs')(NodeGit);
 const exec = require('./execHelper');
-const Repository = NodeGit.Repository;
+const isAtleastGitVersion = require('./regex');
+
 const Checkout = NodeGit.Checkout;
+const Remote = NodeGit.Remote;
+const Repository = NodeGit.Repository;
+
+let repository;
+let testRemote;
+
+const sshKeyPath = {
+	public: path.join('/Users/mohseenm/.ssh', 'axosoft.pub'),
+	private: path.join('/Users/mohseenm/.ssh', 'axosoft')
+}
+
+const pushOptions = {
+	callbacks: {
+		certificateCheck: () => 1,
+		credentials: (url, username) =>
+			NodeGit.Cred.sshKeyNew(username, sshKeyPath.public, sshKeyPath.private, '')
+	}
+}
+
 console.log('NodeGitLFS: ', NodeGitLfs);
 function commitFile(repo, fileName, commitMessage) {
 	let index;
@@ -93,4 +113,39 @@ const testAddAttribute = () => {
 		.then(ng => ng.LFS.addAttribute(path.join(process.cwd(), '.gitattributes'), '*.dmg'))
 		.catch(error => console.log(error));
 };
-return testAddAttribute();
+
+const testGitVersion = () => {
+	return exec('git --version').catch(err => console.log('Error executing git --version'))
+		.then((stdout, stderr) => {
+			return console.log(isAtleastGitVersion(stdout, '2.18.2'));
+		});
+};
+
+const testPush = () => {
+	const NodeGitLFS = NodeGitLfs.then((ng) => {
+		console.log('NodeGitLFS: ', ng.LFS);
+		return ng;
+	})
+		.then((ng) => ng.LFS.initialize(process.cwd()))
+		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
+		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
+		.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		.then(()=> {
+			return Repository.open(process.cwd())
+		})
+		.then((repo) => {
+			repository = repo;
+			return repo;
+		})
+		.then((repo) => {
+			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
+		})
+		.then((repo) => Remote.lookup(repository, 'origin'))
+		.then((remote) => {
+			testRemote = remote;
+			return remote.getRefspec(0);
+		})
+		.then(spec => testRemote.push([spec], pushOptions));
+		// .then(() => console.log('Test repo: ', repository));
+};
+return testPush();

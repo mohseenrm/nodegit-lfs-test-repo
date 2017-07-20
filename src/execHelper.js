@@ -6,7 +6,7 @@ const exec = (command, opts) => new Promise(
       if (err) {
         reject(err);
       } else {
-        resolve(proc, stdout, stderr);
+        resolve(stdout, stderr);
       }
     });
   });
