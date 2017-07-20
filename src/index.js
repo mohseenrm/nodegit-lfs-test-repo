@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const NodeGit = require('nodegit');
 const NodeGitLfs = require('nodegit-lfs')(NodeGit);
-const exec = require('./execHelper');
+const exec = require('./execHelper').exec;
 const isAtleastGitVersion = require('./regex');
 
 const Checkout = NodeGit.Checkout;
@@ -11,10 +11,11 @@ const Repository = NodeGit.Repository;
 
 let repository;
 let testRemote;
+let nodegit;
 
 const sshKeyPath = {
-	public: path.join('/Users/mohseenm/.ssh', 'axosoft.pub'),
-	private: path.join('/Users/mohseenm/.ssh', 'axosoft')
+	public: path.join('/Users/mohseenm/.ssh', 'test.pub'),
+	private: path.join('/Users/mohseenm/.ssh', 'test')
 }
 
 const pushOptions = {
@@ -53,19 +54,28 @@ function commitFile(repo, fileName, commitMessage) {
 		})
 		.then(function(parentResult) {
 			parent = parentResult;
-			return Promise.all([
-			NodeGit.Signature.create("Foo Bar", "foo@bar.com", 123456789, 60),
-			NodeGit.Signature.create("Foo A Bar", "foo@bar.com", 987654321, 90)
-			]);
+			// TODO: this is the problem
+			/* return Promise.all([
+			NodeGit.Signature.create("Mohseen Mukaddam", "mohseenmukaddam6@gmail.com", 123456789, 60),
+			NodeGit.Signature.create("Foo A Bar", "mohseenmukaddam6@gmail.com", 987654321, 90)
+			]); */
+			return NodeGit.Signature.default(repo);
 		})
 		.then(function(signatures) {
-			let author = signatures[0];
+			/* let author = signatures[0];
 			let committer = signatures[1];
 
 			return repo.createCommit(
 			"HEAD",
 			author,
 			committer,
+			commitMessage,
+			treeOid,
+			[parent]); */
+			return repo.createCommit(
+			"HEAD",
+			signatures,
+			signatures,
 			commitMessage,
 			treeOid,
 			[parent]);
@@ -124,12 +134,13 @@ const testGitVersion = () => {
 const testPush = () => {
 	const NodeGitLFS = NodeGitLfs.then((ng) => {
 		console.log('NodeGitLFS: ', ng.LFS);
+		nodegit = ng;
 		return ng;
 	})
 		.then((ng) => ng.LFS.initialize(process.cwd()))
 		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
 		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
-		.then((process, stdin, stdout) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(()=> {
 			return Repository.open(process.cwd())
 		})
@@ -140,12 +151,17 @@ const testPush = () => {
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
 		})
-		.then((repo) => Remote.lookup(repository, 'origin'))
+		.then(() => nodegit.LFS.commands.push('origin master --all'))
+		.then(({process, stdout, stderr}) => {
+			console.log('LFS PUSH STDOUT: ', stdout);
+		})
+		/* .then(() => Remote.lookup(repository, 'origin'))
 		.then((remote) => {
 			testRemote = remote;
 			return remote.getRefspec(0);
 		})
-		.then(spec => testRemote.push([spec], pushOptions));
+		.then(spec => testRemote.push(['refs/heads/master:refs/remotes/origin/master'], pushOptions)) */
+		.catch(err => console.log('Error: ', err));
 		// .then(() => console.log('Test repo: ', repository));
 };
 return testPush();
