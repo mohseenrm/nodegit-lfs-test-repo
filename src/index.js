@@ -139,8 +139,8 @@ const testPush = () => {
 	})
 		.then((ng) => ng.LFS.initialize(process.cwd()))
 		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
-		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
-		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		// .then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
+		// .then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(() => exec('touch dummy_file'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(()=> {
@@ -150,14 +150,14 @@ const testPush = () => {
 			repository = repo;
 			return repo;
 		})
-		.then((repo) => {
-			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
-				.then(() => commitFile(repository, 'dummy_file', 'LFS Clean Test PUSH dummy file'));
-		})
-		.then(() => nodegit.LFS.commands.push('origin master --all')) 
+		/* .then((repo) => {
+			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH');
+		}) */
+		.then(() => commitFile(repository, 'dummy_file', 'LFS Clean Test PUSH dummy file'))
+		/* .then(() => nodegit.LFS.commands.push('origin master --all')) 
 		.then(({process, stdout, stderr}) => {
 			console.log('LFS PUSH STDOUT: ', stdout);
-		})
+		}) */
 		/* .then(() => nodegit.LFS.commands.git('push origin master')) */
 		.then(() => Remote.lookup(repository, 'origin'))
 		.then((remote) => {
