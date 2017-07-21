@@ -169,4 +169,18 @@ const testPush = () => {
 		.catch(err => console.log('Error: ', err));
 		// .then(() => console.log('Test repo: ', repository));
 };
+
+const testPull = () => {
+	const NodeGitLFS = NodeGitLfs.then((ng) => {
+		console.log('NodeGitLFS: ', ng.LFS);
+		nodegit = ng;
+		return ng;
+	})
+		.then((ng) => ng.LFS.initialize(process.cwd()))
+		.then(() => nodegit.LFS.commands.pull()) 
+		.then(({process, stdout, stderr}) => {
+			console.log('LFS PUSH STDOUT: ', stdout);
+		}) 
+		.catch(err => console.log('Error: ', err));
+};
 return testPush();
