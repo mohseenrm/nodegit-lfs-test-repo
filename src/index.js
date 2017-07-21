@@ -170,17 +170,30 @@ const testPush = () => {
 		// .then(() => console.log('Test repo: ', repository));
 };
 
-const testPull = () => {
+const testFetch = () => {
 	const NodeGitLFS = NodeGitLfs.then((ng) => {
 		console.log('NodeGitLFS: ', ng.LFS);
 		nodegit = ng;
 		return ng;
 	})
 		.then((ng) => ng.LFS.initialize(process.cwd()))
-		.then(() => nodegit.LFS.commands.pull()) 
+		.then(()=> {
+			return Repository.open(process.cwd())
+		})
+		.then((repo) => {
+			repository = repo;
+			return repo;
+		})
+		.then(() => Remote.lookup(repository, 'origin'))
+		.then((remote) => {
+			testRemote = remote;
+			return remote.getRefspec(0);
+		})
+		.then(spec => testRemote.fetch(['+refs/heads/master:refs/heads/master'], pushOptions))
+		.then(() => nodegit.LFS.commands.fetch('origin master')) 
 		.then(({process, stdout, stderr}) => {
-			console.log('LFS PUSH STDOUT: ', stdout);
+			console.log('LFS FETCH STDOUT: ', stdout);
 		}) 
 		.catch(err => console.log('Error: ', err));
 };
-return testPull();
+return testFetch();
