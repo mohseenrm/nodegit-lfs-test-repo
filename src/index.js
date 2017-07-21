@@ -151,7 +151,8 @@ const testPush = () => {
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
 		})
-		.then(() => nodegit.LFS.commands.push('origin master --all'))
+		/* .then(() => nodegit.LFS.commands.push('origin master --all')) */
+		.then(() => nodegit.LFS.commands.git('push origin master'))
 		.then(({process, stdout, stderr}) => {
 			console.log('LFS PUSH STDOUT: ', stdout);
 		})
