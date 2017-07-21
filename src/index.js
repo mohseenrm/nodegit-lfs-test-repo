@@ -190,10 +190,17 @@ const testFetch = () => {
 			return remote.getRefspec(0);
 		})
 		.then(spec => testRemote.fetch(['+refs/heads/master:refs/heads/master'], pushOptions))
-		.then(() => nodegit.LFS.commands.fetch('origin master')) 
+		.then(() => nodegit.LFS.commands.fetch('origin master'))
 		.then(({process, stdout, stderr}) => {
 			console.log('LFS FETCH STDOUT: ', stdout);
-		}) 
+		})
+		.then(() => {
+			var opts = {
+				checkoutStrategy: Checkout.STRATEGY.FORCE,
+				paths: 'dummy_file_does_not_exists_yet'
+			};
+			return Checkout.head(repository, opts);
+		})
 		.catch(err => console.log('Error: ', err));
 };
 return testFetch();
