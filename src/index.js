@@ -141,6 +141,8 @@ const testPush = () => {
 		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
 		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
+		.then(() => exec('touch dummy_file'))
+		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(()=> {
 			return Repository.open(process.cwd())
 		})
@@ -150,6 +152,7 @@ const testPush = () => {
 		})
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
+				.then(() => commitFile(repository, 'dummy_file', 'LFS Clean Test PUSH dummy file'));
 		})
 		.then(() => nodegit.LFS.commands.push('origin master --all')) 
 		.then(({process, stdout, stderr}) => {
