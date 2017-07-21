@@ -140,6 +140,7 @@ const testPush = () => {
 		.then((ng) => ng.LFS.initialize(process.cwd()))
 		// .then(() => fs.appendFileSync(path.join(process.cwd(), '.gitattributes'), '*.txt filter=lfs\n'));
 		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
+		.then(() => exec('cat big_file_test.txt'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(() => exec('echo "dummy content" >> dummy_file'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
