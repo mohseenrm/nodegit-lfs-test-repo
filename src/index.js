@@ -151,17 +151,18 @@ const testPush = () => {
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH')
 		})
+		.then(() => nodegit.LFS.commands.push('origin master --all')) 
+		.then(({process, stdout, stderr}) => {
+			console.log('LFS PUSH STDOUT: ', stdout);
+		})
 		/* .then(() => nodegit.LFS.commands.git('push origin master')) */
 		.then(() => Remote.lookup(repository, 'origin'))
 		.then((remote) => {
 			testRemote = remote;
 			return remote.getRefspec(0);
 		})
-		.then(spec => testRemote.push(['+refs/heads/master:refs/remotes/origin/master'], pushOptions)) 
-		.then(() => nodegit.LFS.commands.push('origin master --all')) 
-		.then(({process, stdout, stderr}) => {
-			console.log('LFS PUSH STDOUT: ', stdout);
-		})
+		.then(spec => testRemote.push(['+refs/heads/master:refs/remotes/origin/master'], pushOptions))
+		.then(result => console.log('NodeGit Result: ', result))
 		.catch(err => console.log('Error: ', err));
 		// .then(() => console.log('Test repo: ', repository));
 };
