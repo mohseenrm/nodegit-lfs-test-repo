@@ -183,4 +183,4 @@ const testPull = () => {
 		}) 
 		.catch(err => console.log('Error: ', err));
 };
-return testPush();
+return testPull();
