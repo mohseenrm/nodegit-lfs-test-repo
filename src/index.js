@@ -3,7 +3,9 @@ const path = require('path');
 const NodeGit = require('nodegit');
 const NodeGitLfs = require('nodegit-lfs')(NodeGit);
 const exec = require('./execHelper').exec;
-const isAtleastGitVersion = require('./regex');
+const regex = require('./regex');
+const isAtleastGitVersion = regex.isAtleastGitVersion;
+const isAtleastLfsVersion = regex.isAtleastLfsVersion;
 
 const Checkout = NodeGit.Checkout;
 const Remote = NodeGit.Remote;
@@ -126,11 +128,18 @@ const testAddAttribute = () => {
 
 const testGitVersion = () => {
 	return exec('git --version').catch(err => console.log('Error executing git --version'))
-		.then((stdout, stderr) => {
-			return console.log(isAtleastGitVersion(stdout, '2.18.2'));
+		.then((process) => {
+			return console.log(isAtleastGitVersion(process.stdout, '2.1.2'));
 		});
 };
 
+const testLfsVersion = () => {
+	return exec('git lfs version').catch(err => console.log('Error executing git lfs version'))
+		.then((process) => {
+			return console.log(isAtleastLfsVersion(process.stdout, '1.0.0'));
+		});
+};
+// TODO: git prune before git lfs push
 const testPush = () => {
 	const NodeGitLFS = NodeGitLfs.then((ng) => {
 		console.log('NodeGitLFS: ', ng.LFS);
@@ -203,4 +212,5 @@ const testFetch = () => {
 		})
 		.catch(err => console.log('Error: ', err));
 };
-return testPush();
+
+return testLfsVersion();
