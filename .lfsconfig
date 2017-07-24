@@ -1,2 +1,4 @@
 [lfs]
 	url = https://gk-lfstestserver:9999/
+[http]
+	sslverify = false
