@@ -142,7 +142,7 @@ const testPush = () => {
 		.then(() => exec('base64 /dev/urandom | head -c 20 > big_file_test.txt'))
 		.then(() => exec('cat big_file_test.txt'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
-		.then(() => exec('echo "dummy content" >> dummy_file'))
+		.then(() => exec('echo "dummy content" >> dummy_file.txt'))
 		.then(({process, stdin, stdout}) => console.log(`[DEBUG]{Process}: ${process}\n\n`))
 		.then(()=> {
 			return Repository.open(process.cwd())
@@ -154,7 +154,7 @@ const testPush = () => {
 		.then((repo) => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH');
 		}) 
-		.then(() => commitFile(repository, 'dummy_file', 'LFS Clean Test PUSH dummy file'))
+		.then(() => commitFile(repository, 'dummy_file.txt', 'LFS Clean Test PUSH dummy file'))
 		.then(() => nodegit.LFS.commands.git('push origin master')) 
 		.then(() => Remote.lookup(repository, 'origin'))
 		.then((remote) => {
@@ -203,4 +203,4 @@ const testFetch = () => {
 		})
 		.catch(err => console.log('Error: ', err));
 };
-return testFetch();
+return testPush();

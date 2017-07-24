@@ -1,4 +1,4 @@
 [lfs]
-    url = "http://gk-lfstestserver:9876/"
+    url = "http://127.0.0.1:9001/"
 [http]
 	sslverify = false
