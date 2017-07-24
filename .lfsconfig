@@ -1,4 +1,4 @@
 [lfs]
-	url = https://gk-lfstestserver:9999/
+	url = https://admin:admin@gk-lfstestserver:9999
 [http]
 	sslverify = false
