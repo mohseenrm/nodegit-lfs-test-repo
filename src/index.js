@@ -213,4 +213,4 @@ const testFetch = () => {
 		.catch(err => console.log('Error: ', err));
 };
 
-return testLfsVersion();
+return testPush();
