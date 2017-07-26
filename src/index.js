@@ -164,14 +164,14 @@ const testPush = () => {
 			return commitFile(repo, 'big_file_test.txt', 'LFS Clean Test PUSH');
 		}) 
 		.then(() => commitFile(repository, 'dummy_file.txt', 'LFS Clean Test PUSH dummy file'))
-		.then(() => nodegit.LFS.commands.git('push origin master')) 
+		.then(() => nodegit.LFS.core.git('push origin master')) 
 		.then(() => Remote.lookup(repository, 'origin'))
 		.then((remote) => {
 			testRemote = remote;
 			return remote.getRefspec(0);
 		})
 		.then(spec => testRemote.push(['+refs/heads/master:refs/heads/master'], pushOptions))
-		.then(() => nodegit.LFS.commands.push('origin master --all')) 
+		.then(() => nodegit.LFS.core.push('origin master --all')) 
 		.then(({process, stdout, stderr}) => {
 			console.log('LFS PUSH STDOUT: ', stdout);
 		}) 
@@ -199,7 +199,7 @@ const testFetch = () => {
 			return remote.getRefspec(0);
 		})
 		.then(spec => testRemote.fetch(['+refs/heads/master:refs/heads/master'], pushOptions))
-		.then(() => nodegit.LFS.commands.fetch('origin master'))
+		.then(() => nodegit.LFS.core.fetch('origin master'))
 		.then(({process, stdout, stderr}) => {
 			console.log('LFS FETCH STDOUT: ', stdout);
 		})
@@ -213,4 +213,15 @@ const testFetch = () => {
 		.catch(err => console.log('Error: ', err));
 };
 
-return testPush();
+const testCore = () => {
+	const NodeGitLFS = NodeGitLfs.then((ng) => {
+		console.log('NodeGitLFS: ', ng.LFS);
+		nodegit = ng;
+		return ng;
+	})
+		.then(nodegit => nodegit.LFS.core.git('--version'))
+    .then(process => console.log(process.stdout))
+		.catch(err => console.log('Error: ', err));
+};
+
+return testCore();
